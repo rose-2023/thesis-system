@@ -34,6 +34,8 @@
 <script setup>
 import { ref, onMounted } from "vue";
 import { api } from "../api";
+import { useRouter } from "vue-router";
+const router = useRouter();
 
 const letters = ["A","B","C","D"];
 const q = ref(null);
@@ -99,8 +101,9 @@ async function submit() {
     result.value = res.data;
 
     if (res.data.ended) {
+      localStorage.setItem("pretest_done", "true");
       msg.value = "前測完成，返回首頁";
-      window.location.href = "/home";
+      router.replace("/home");
       return;
     }
 

@@ -1,22 +1,18 @@
-from flask import Flask
+from flask import Flask, send_from_directory
 from flask_cors import CORS
-from .routes.quiz import quiz_bp
-from .routes.student import student_bp
-from .routes.admin_upload import admin_upload_bp
+from .routes import register_blueprints
+import os
 
 def create_app():
     app = Flask(__name__)
-    # CORS（前端 Vue 用）
-    CORS(app, resources={r"/api/*": {"origins": "http://localhost:5173"}})
+    PROJECT_ROOT = os.getcwd()
+    CORS(app, resources={r"/api/*": {"origins": ["http://localhost:5173", "http://127.0.0.1:5173"]}})
 
-# ===== 註冊 blueprint =====
-    from .routes.auth import auth_bp
-    from .routes.student import student_bp
-    from .routes.admin import admin_bp
+    register_blueprints(app)  # ✅ 統一在 routes/__init__.py 註冊所有 blueprint
 
-    app.register_blueprint(auth_bp, url_prefix="/api/auth")
-    app.register_blueprint(student_bp, url_prefix="/api/student")
-    app.register_blueprint(admin_bp, url_prefix="/api/admin")
-    app.register_blueprint(quiz_bp, url_prefix="/api/quiz")
-    app.register_blueprint(admin_upload_bp, url_prefix="/api/admin")
+    # ===== 提供上傳檔案的靜態路徑 =====
+    @app.route("/uploads/<path:filename>")
+    def serve_uploads(filename):
+        return send_from_directory(os.path.join(PROJECT_ROOT, "uploads"), filename)
+
     return app

@@ -12,11 +12,10 @@ const routes = [
   { path: "/entry", component: Entry },
   { path: "/quiz", component: Quiz },
   { path: "/home", component: StudentHome },
-//   { path: "/admin/upload", component: () => import("../pages/AdminUpload.vue") }
-  { path: "/admin/upload", component: () => import("../pages/AdminUpload.vue") },
-  { path: "/admin/upload", component: AdminUpload }
+  { path: "/admin/upload", component: AdminUpload },
+  { path: "/:pathMatch(.*)*", redirect: "/login" },
+  { path: "/learn/:unit", name: "StudentLearning", component: () => import("../pages/StudentLearning.vue") },
 ];
-
 
 export const router = createRouter({
   history: createWebHistory(),

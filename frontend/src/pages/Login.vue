@@ -37,11 +37,6 @@
       </button>
 
       <p class="error" v-if="error">{{ error }}</p>
-
-      <div class="footer">
-        <span class="muted">還沒有帳號？</span>
-        <a class="link" href="#" @click.prevent="goRegister">去註冊</a>
-      </div>
     </div>
 
     <p class="copyright">
@@ -57,46 +52,34 @@ import { api } from "../api";
 
 const router = useRouter();
 
-
 const studentId = ref("");
 const password = ref("");
 const loading = ref(false);
 const error = ref("");
 
-function goRegister() {
-  alert("下一步會做註冊頁（router 之後會接上）");
-}
-
 async function login() {
   error.value = "";
-
-  if (!studentId.value || !password.value) {
-    error.value = "請輸入學號與密碼";
-    return;
-  }
-
   loading.value = true;
+
   try {
-   const res = await api.post("/api/auth/login", {
-      student_id: studentId.value,
+    const res = await api.post("/api/auth/login", {
+      studentId: studentId.value,
       password: password.value,
     });
 
-    if (!res.data?.ok) {
-      error.value = res.data?.message || "登入失敗";
-      return;
+    // ✅ 假設後端回：role, token (你依你的欄位調整)
+    const role = res.data?.role;
+
+    // ✅ 例：如果你有 token 就存
+    if (res.data?.token) localStorage.setItem("token", res.data.token);
+
+    if (role === "admin") {
+      router.replace("/admin/upload");
+    } else {
+      // ✅ 學生：依 pretest_done 分流
+      const pretestDone = localStorage.getItem("pretest_done") === "true";
+      router.replace(pretestDone ? "/home" : "/quiz");
     }
-
-    localStorage.setItem("role", res.data.role);
-    localStorage.setItem("participant_id", res.data.participant_id);
-    localStorage.setItem("name", res.data.name);
-    localStorage.setItem("class_name", res.data.class_name);
-
-   if (res.data.role === "admin") {
-    router.replace("/admin/upload");
-  } else {
-    router.replace("/entry");
-  }
   } catch (e) {
     error.value =
       e?.response?.data?.message ||
@@ -107,6 +90,7 @@ async function login() {
   }
 }
 </script>
+
 
 <style scoped>
 .page{
