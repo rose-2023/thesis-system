@@ -41,6 +41,9 @@ const routes = [
   { path: "/student/learning", name: "studentLearning", component: () => import("../pages/StudentLearning.vue"), meta: { public: true } },
   { path: "/student/dashboard", name: "studentDashboard", component: () => import("../pages/StudentDashboard.vue"), meta: { public: true } },
 
+<<<<<<< HEAD
+>>>>>>> 816ab8e (0207 新增AdminUpload頁面內容)
+=======
 >>>>>>> 816ab8e (0207 新增AdminUpload頁面內容)
   { path: "/:pathMatch(.*)*", redirect: "/login" },
   { path: "/learn/:unit", name: "StudentLearning", component: () => import("../pages/StudentLearning.vue") },
