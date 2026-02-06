@@ -438,6 +438,25 @@ async function upload() {
   }
 }
 
+// ✅ 新增：導去字幕校正頁（TeacherSubtitles.vue）
+function goSubtitleCorrect(v) {
+  const videoId = v?._id || v?.id;
+  if (!videoId) {
+    alert("找不到 video_id，請確認影片資料有 _id 或 id");
+    return;
+  }
+
+  // 兩種都可：
+  // 1) 走老師端路由 /teacher/subtitle
+  router.push({
+    name: "teacherSubtitle",
+    query: { video_id: String(videoId), unit: v.unit || "", title: v.title || "" }
+  });
+
+  // 2) 或走 /subtitle-verify（你 router 也有加一條 alias）
+  // router.push({ name: "subtitleVerify", query: { video_id: String(videoId) } });
+}
+
 async function loadList() {
   err.value = "";
   msg.value = "";
